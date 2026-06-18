@@ -16,7 +16,7 @@ func main() {
 	injectRoutes()
 
 	log.Println("Server is running on PORT", constant.PORT)
-	http.ListenAndServe(constant.PORT, nil)
+	http.ListenAndServe("0.0.0.0:"+constant.PORT, nil)
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
