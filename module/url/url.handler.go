@@ -36,7 +36,7 @@ func CreateShortUrlHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// Retry loop for normal generation
 		for i := 0; i < 8; i++ { // max 8 attempts
-			code, genErr := short_id.GenerateShortId(8)
+			code, genErr := short_id.GenerateShortId(5)
 			if genErr != nil {
 				http.Error(w, "Failed to generate short id", http.StatusInternalServerError)
 				return
