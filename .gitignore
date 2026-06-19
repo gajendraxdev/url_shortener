@@ -32,3 +32,4 @@ go.work.sum
 # .vscode/
 
 url_shortener.db
+url_shortener.db*

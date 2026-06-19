@@ -51,7 +51,6 @@ func CreateShortUrlHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	log.Println(err)
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusUnprocessableEntity)
 		return

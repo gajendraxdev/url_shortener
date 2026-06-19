@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vyson — URL Shortener</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>Vyson URL Shortener</h1>
+    <p class="sub">Paste a link and get a short, shareable URL.</p>
+
+    <label for="url">Original URL</label>
+    <input id="url" placeholder="https://example.com/long/path" />
+
+    <label for="custom">Custom key (optional)</label>
+    <input id="custom" placeholder="my-key (alphanumeric)" />
+
+    <button id="shorten">Shorten</button>
+
+    <div id="result" class="result" hidden>
+      <p>Short URL:</p>
+      <a id="shortlink" target="_blank" rel="noopener"></a>
+      <button id="copy">Copy</button>
+    </div>
+
+    <footer class="foot">Deployed: <a href="https://vysonm1a1.thesudoer.in/" target="_blank">vysonm1a1.thesudoer.in</a></footer>
+  </main>
+
+  <script>
+  async function shorten() {
+    const url = document.getElementById('url').value.trim();
+    const custom = document.getElementById('custom').value.trim();
+    if (!url) return alert('Please enter a URL');
+
+    const body = { url: url, custom_key: custom };
+    try {
+      const res = await fetch('/api/shorten', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || res.statusText);
+      }
+      const data = await res.json();
+      const link = data.short_url || (location.origin + '/' + data.short_code);
+      const a = document.getElementById('shortlink');
+      a.href = link; a.textContent = link;
+      document.getElementById('result').hidden = false;
+    } catch (e) {
+      alert('Error: ' + e.message);
+    }
+  }
+
+  document.getElementById('shorten').addEventListener('click', shorten);
+  document.getElementById('copy').addEventListener('click', () => {
+    const a = document.getElementById('shortlink');
+    navigator.clipboard.writeText(a.href).then(()=>alert('Copied to clipboard'))
+  });
+  </script>
+</body>
+</html>

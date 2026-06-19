@@ -24,8 +24,23 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Looks Good :D")
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	// Serve index at root
+	if r.URL.Path == "/" {
+		http.ServeFile(w, r, "web/index.html")
+		return
+	}
+
+	// For other non-api paths, delegate to redirect handler
+	url.RedirectToOriginHandler(w, r)
+}
+
 func injectRoutes() {
-	http.HandleFunc("/", url.RedirectToOriginHandler)
+	// Serve static assets
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
+
+	// Root handler serves UI and delegates redirects
+	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/api/health", healthCheck)
 	http.HandleFunc("/api/shorten", url.CreateShortUrlHandler)
 }
